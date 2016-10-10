@@ -1,7 +1,6 @@
 package service;
 
 import database.CourseInfoDb;
-import model.Course;
 import model.CourseInfo;
 
 import javax.ws.rs.*;

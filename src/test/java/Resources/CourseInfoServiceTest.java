@@ -1,4 +1,4 @@
-package service;
+package Resources;
 
 import database.CourseInfoDb;
 import model.CourseInfo;
@@ -10,15 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import service.CourseInfoService;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by rjpvr on 10-10-2016.
