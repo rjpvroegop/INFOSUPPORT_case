@@ -3,7 +3,10 @@ package database;
 import model.CourseInfo;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class CourseInfoDb {
     private static Connection conn = null;
@@ -12,12 +15,14 @@ public class CourseInfoDb {
         try {
             conn = DatabaseConnector.connect();
 
-            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (name, description) values(?, ?)");
+            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (titel, code, datum, duur) values(?, ?, ?, ?)");
 
             coursesInfo.forEach(info -> {
                 try {
-                    courseStatement.setString(1, info.getName());
-                    courseStatement.setString(2, info.getDescription());
+                    courseStatement.setString(1, info.getTitel());
+                    courseStatement.setString(2, info.getCursuscode());
+                    courseStatement.setDate(3, java.sql.Date.valueOf(info.getStartdatum()));
+                    courseStatement.setString(4, info.getDuur());
 
                     courseStatement.executeUpdate();
                 }catch(Exception e){
@@ -37,10 +42,12 @@ public class CourseInfoDb {
         try {
             conn = DatabaseConnector.connect();
 
-            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (name, description) values(?, ?)");
+            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (titel, code, datum, duur) values(?, ?, ?, ?)");
 
-            courseStatement.setString(1, info.getName());
-            courseStatement.setString(2, info.getDescription());
+            courseStatement.setString(1, info.getTitel());
+            courseStatement.setString(2, info.getCursuscode());
+            courseStatement.setDate(3, java.sql.Date.valueOf(info.getStartdatum()));
+            courseStatement.setString(4, info.getDuur());
 
             courseStatement.executeUpdate();
 
@@ -57,16 +64,21 @@ public class CourseInfoDb {
         try {
             conn = DatabaseConnector.connect();
 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy");
+            formatter = formatter.withLocale(Locale.GERMAN);
+
             PreparedStatement customerStatement = conn.prepareStatement("SELECT * FROM courseinfo");
             ResultSet rs = customerStatement.executeQuery();
 
             while(rs.next()){
                 //Retrieve by column name
                 int id  = rs.getInt("id");
-                String name = rs.getString("name");
-                String desc = rs.getString("description");
+                String titel = rs.getString("titel");
+                String code = rs.getString("code");
+                LocalDate date = LocalDate.parse(rs.getString("datum"));
+                String dura = rs.getString("duur");
 
-                CourseInfo customer = CourseInfo.builder().id(id).name(name).description(desc).build();
+                CourseInfo customer = CourseInfo.builder().id(id).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
                 customers.add(customer);
             }
 
@@ -90,10 +102,12 @@ public class CourseInfoDb {
             while(rs.next()){
                 //Retrieve by column name
                 int cid  = rs.getInt("id");
-                String name = rs.getString("name");
-                String desc = rs.getString("description");
+                String titel = rs.getString("titel");
+                String code = rs.getString("code");
+                LocalDate date = LocalDate.parse(rs.getString("datum"));
+                String dura = rs.getString("duur");
 
-                courseInfoBuilder = courseInfoBuilder.id(cid).name(name).description(desc);
+                CourseInfo customer = CourseInfo.builder().id(cid).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
             }
 
             conn.close();
@@ -108,11 +122,14 @@ public class CourseInfoDb {
         try {
             conn = DatabaseConnector.connect();
 
-            PreparedStatement infoStatement = conn.prepareStatement("UPDATE courseinfo SET name = ?, description = ? WHERE id IN ?");
+            PreparedStatement infoStatement = conn.prepareStatement("UPDATE courseinfo SET titel = ?, code = ?, datum = ?, duur = ? WHERE id IN ?");
 
-            infoStatement.setString(1, info.getName());
-            infoStatement.setString(2, info.getDescription());
-            infoStatement.setInt(3, info.getId());
+            infoStatement.setString(1, info.getTitel());
+            infoStatement.setString(2, info.getCursuscode());
+            infoStatement.setDate(3, java.sql.Date.valueOf(info.getStartdatum()));
+            infoStatement.setString(4, info.getDuur());
+
+            infoStatement.setInt(5, info.getId());
 
             infoStatement.executeUpdate();
 

@@ -37,7 +37,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void getCourseInfoList() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
         ArrayList<CourseInfo> ciList = new ArrayList<>();
         ciList.add(ci);
 
@@ -51,7 +51,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void getCourseInfoListToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
         ArrayList<CourseInfo> ciList = new ArrayList<>();
         ciList.add(ci);
 
@@ -64,7 +64,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void getCourseInfoPerCourse() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         Mockito.when(db.getCourseInfo(0)).thenReturn(ci);
 
@@ -77,7 +77,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void getCourseInfoPerCourseToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         Mockito.when(db.getCourseInfo(0)).thenThrow(new IllegalArgumentException());
 
@@ -90,7 +90,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void addCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doNothing().when(db).saveCourseInfo(ci);
 
@@ -103,7 +103,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void addCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doThrow(new IllegalArgumentException()).when(db).saveCourseInfo(ci);
 
@@ -115,8 +115,34 @@ public class CourseInfoServiceTest {
     }
 
     @Test
+    public void addCourseInfoString() throws Exception {
+        String ci = "";
+
+        doNothing().when(db).saveCourseInfo(any(ArrayList.class));
+
+        Response r = sut.addCourseInfo(ci);
+
+        Mockito.verify(db, times(1)).saveCourseInfo(any(ArrayList.class));
+
+        assertThat(r.getStatus(), is(200));
+    }
+
+    @Test
+    public void addCourseInfoStringToHandleException() throws Exception {
+        String ci = "";
+
+        doThrow(new IllegalArgumentException()).when(db).saveCourseInfo(any(ArrayList.class));
+
+        Response r = sut.addCourseInfo(ci);
+
+        Mockito.verify(db, times(1)).saveCourseInfo(any(ArrayList.class));
+
+        assertThat(r.getStatus(), is(412));
+    }
+
+    @Test
     public void updateCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doNothing().when(db).updateCourseInfo(ci);
 
@@ -129,7 +155,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void updateCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doThrow(new IllegalArgumentException()).when(db).updateCourseInfo(ci);
 
@@ -142,7 +168,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void removeCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doNothing().when(db).removeCourseInfo(ci);
 
@@ -155,7 +181,7 @@ public class CourseInfoServiceTest {
 
     @Test
     public void removeCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo(1, "test", "desc");
+        CourseInfo ci = new CourseInfo();
 
         doThrow(new IllegalArgumentException()).when(db).removeCourseInfo(ci);
 

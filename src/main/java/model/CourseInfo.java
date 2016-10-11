@@ -2,6 +2,8 @@ package model;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 /**
  * Created by rjpvr on 10-10-2016.
  */
@@ -13,6 +15,8 @@ import lombok.*;
 @Builder
 public class CourseInfo {
     private int id;
-    private String name;
-    private String description;
+    private String titel;
+    private String cursuscode;
+    private LocalDate startdatum;
+    private String duur;
 }
