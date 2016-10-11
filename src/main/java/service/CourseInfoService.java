@@ -1,5 +1,6 @@
 package service;
 
+import controller.CourseInfoStringController;
 import database.CourseInfoDb;
 import model.CourseInfo;
 
@@ -44,6 +45,19 @@ public class CourseInfoService {
     public Response addCourseInfo(CourseInfo courseInfo){
         try {
             db.saveCourseInfo(courseInfo);
+            return header(Response.ok("{\"message\":\"ok\"}"));
+        } catch(Exception exception){
+            return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
+        }
+    }
+
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.TEXT_PLAIN})
+    public Response addCourseInfo(String courseInfo){
+        try {
+            CourseInfoStringController cisc = new CourseInfoStringController();
+            db.saveCourseInfo(cisc.toArrayList(courseInfo));
             return header(Response.ok("{\"message\":\"ok\"}"));
         } catch(Exception exception){
             return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));

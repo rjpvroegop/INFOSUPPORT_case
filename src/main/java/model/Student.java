@@ -18,5 +18,6 @@ public class Student {
     private String name;
     private String lastName;
     private StudentType type;
-    private StudentData data;
+    private StudentData sd;
+    private CompanyData cd;
 }

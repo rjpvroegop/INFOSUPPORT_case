@@ -8,7 +8,32 @@ import java.util.ArrayList;
 public class CourseInfoDb {
     private static Connection conn = null;
 
-    public void saveCourseInfo(CourseInfo info){
+    public void saveCourseInfo(ArrayList<CourseInfo> coursesInfo) throws SQLException, ClassNotFoundException {
+        try {
+            conn = DatabaseConnector.connect();
+
+            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (name, description) values(?, ?)");
+
+            coursesInfo.forEach(info -> {
+                try {
+                    courseStatement.setString(1, info.getName());
+                    courseStatement.setString(2, info.getDescription());
+
+                    courseStatement.executeUpdate();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            });
+
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void saveCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
             conn = DatabaseConnector.connect();
 
@@ -23,10 +48,11 @@ public class CourseInfoDb {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
-    public ArrayList<CourseInfo> getCourseInfo(){
+    public ArrayList<CourseInfo> getCourseInfo() throws SQLException, ClassNotFoundException {
         ArrayList<CourseInfo>customers = new ArrayList<>();
         try {
             conn = DatabaseConnector.connect();
@@ -48,11 +74,12 @@ public class CourseInfoDb {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         return customers;
     }
 
-    public CourseInfo getCourseInfo(int id) {
+    public CourseInfo getCourseInfo(int id) throws SQLException, ClassNotFoundException {
         CourseInfo.CourseInfoBuilder courseInfoBuilder = CourseInfo.builder();
         try {
             conn = DatabaseConnector.connect();
@@ -72,11 +99,12 @@ public class CourseInfoDb {
             conn.close();
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         return courseInfoBuilder.build();
     }
 
-    public void updateCourseInfo(CourseInfo info) {
+    public void updateCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
             conn = DatabaseConnector.connect();
 
@@ -92,10 +120,11 @@ public class CourseInfoDb {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
-    public void removeCourseInfo(CourseInfo info) {
+    public void removeCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
             conn = DatabaseConnector.connect();
 
@@ -109,6 +138,7 @@ public class CourseInfoDb {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 }
