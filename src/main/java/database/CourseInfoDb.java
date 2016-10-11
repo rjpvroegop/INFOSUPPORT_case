@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class CourseInfoDb {
+
+    private DatabaseConnector dc = new DatabaseConnector();
     private static Connection conn = null;
 
     public void saveCourseInfo(ArrayList<CourseInfo> coursesInfo) throws SQLException, ClassNotFoundException {
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (titel, code, datum, duur) values(?, ?, ?, ?)");
 
@@ -40,7 +42,7 @@ public class CourseInfoDb {
 
     public void saveCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (titel, code, datum, duur) values(?, ?, ?, ?)");
 
@@ -60,9 +62,9 @@ public class CourseInfoDb {
     }
 
     public ArrayList<CourseInfo> getCourseInfo() throws SQLException, ClassNotFoundException {
-        ArrayList<CourseInfo>customers = new ArrayList<>();
+        ArrayList<CourseInfo>courseInfos = new ArrayList<>();
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy");
             formatter = formatter.withLocale(Locale.GERMAN);
@@ -75,11 +77,11 @@ public class CourseInfoDb {
                 int id  = rs.getInt("id");
                 String titel = rs.getString("titel");
                 String code = rs.getString("code");
-                LocalDate date = LocalDate.parse(rs.getString("datum"));
+                LocalDate date = LocalDate.parse(rs.getString("datum").split(" ")[0]);
                 String dura = rs.getString("duur");
 
-                CourseInfo customer = CourseInfo.builder().id(id).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
-                customers.add(customer);
+                CourseInfo cInfo = CourseInfo.builder().id(id).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
+                courseInfos.add(cInfo);
             }
 
             conn.close();
@@ -88,13 +90,13 @@ public class CourseInfoDb {
             e.printStackTrace();
             throw e;
         }
-        return customers;
+        return courseInfos;
     }
 
     public CourseInfo getCourseInfo(int id) throws SQLException, ClassNotFoundException {
         CourseInfo.CourseInfoBuilder courseInfoBuilder = CourseInfo.builder();
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             PreparedStatement customerStatement = conn.prepareStatement("SELECT * FROM courseinfo WHERE id = " + id);
             ResultSet rs = customerStatement.executeQuery();
@@ -104,10 +106,11 @@ public class CourseInfoDb {
                 int cid  = rs.getInt("id");
                 String titel = rs.getString("titel");
                 String code = rs.getString("code");
-                LocalDate date = LocalDate.parse(rs.getString("datum"));
+                /* remove time from datetime stamp in SQL */
+                LocalDate date = LocalDate.parse(rs.getString("datum").split(" ")[0]);
                 String dura = rs.getString("duur");
 
-                CourseInfo customer = CourseInfo.builder().id(cid).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
+                courseInfoBuilder.id(cid).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
             }
 
             conn.close();
@@ -120,7 +123,7 @@ public class CourseInfoDb {
 
     public void updateCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             PreparedStatement infoStatement = conn.prepareStatement("UPDATE courseinfo SET titel = ?, code = ?, datum = ?, duur = ? WHERE id IN ?");
 
@@ -143,7 +146,7 @@ public class CourseInfoDb {
 
     public void removeCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
-            conn = DatabaseConnector.connect();
+            conn = dc.connect();
 
             PreparedStatement customerStatement = conn.prepareStatement("DELETE FROM courseinfo WHERE id IN ?");
 

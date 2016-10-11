@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StudentData {
+    private Student student;
     private String address;
     private String city;
     private int housenumber;

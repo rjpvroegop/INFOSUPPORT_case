@@ -10,7 +10,7 @@ public class DatabaseConnector {
 
     private static Connection connection = null;
 
-    public static Connection connect() throws ClassNotFoundException, SQLException {
+    public Connection connect() throws ClassNotFoundException, SQLException {
 
         System.out.println("-------- Oracle JDBC Connection Testing ------");
 

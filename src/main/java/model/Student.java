@@ -1,9 +1,6 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by rjpvr on 10-10-2016.
@@ -13,8 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Student {
-    private int id;
+    private String email;
     private String name;
     private String lastName;
     private StudentType type;
