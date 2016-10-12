@@ -1,5 +1,7 @@
-package database;
+package courseinfo;
 
+import database.DatabaseConnector;
+import model.Course;
 import model.CourseInfo;
 
 import java.sql.*;
@@ -10,35 +12,12 @@ import java.util.Locale;
 
 public class CourseInfoDb {
 
+    protected CourseInfoDb(){
+
+    }
+
     private DatabaseConnector dc = new DatabaseConnector();
     private static Connection conn = null;
-
-    public void saveCourseInfo(ArrayList<CourseInfo> coursesInfo) throws SQLException, ClassNotFoundException {
-        try {
-            conn = dc.connect();
-
-            PreparedStatement courseStatement = conn.prepareStatement("insert into courseinfo (titel, code, datum, duur) values(?, ?, ?, ?)");
-
-            coursesInfo.forEach(info -> {
-                try {
-                    courseStatement.setString(1, info.getTitel());
-                    courseStatement.setString(2, info.getCursuscode());
-                    courseStatement.setDate(3, java.sql.Date.valueOf(info.getStartdatum()));
-                    courseStatement.setString(4, info.getDuur());
-
-                    courseStatement.executeUpdate();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            });
-
-            conn.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
 
     public void saveCourseInfo(CourseInfo info) throws SQLException, ClassNotFoundException {
         try {
@@ -62,7 +41,7 @@ public class CourseInfoDb {
     }
 
     public ArrayList<CourseInfo> getCourseInfo() throws SQLException, ClassNotFoundException {
-        ArrayList<CourseInfo>courseInfos = new ArrayList<>();
+        ArrayList<CourseInfo> courseInfos = new ArrayList<>();
         try {
             conn = dc.connect();
 
@@ -72,17 +51,33 @@ public class CourseInfoDb {
             PreparedStatement customerStatement = conn.prepareStatement("SELECT * FROM courseinfo");
             ResultSet rs = customerStatement.executeQuery();
 
-            while(rs.next()){
-                //Retrieve by column name
-                int id  = rs.getInt("id");
-                String titel = rs.getString("titel");
-                String code = rs.getString("code");
-                LocalDate date = LocalDate.parse(rs.getString("datum").split(" ")[0]);
-                String dura = rs.getString("duur");
+            courseInfos = courseInfoRsToArrayList(rs);
 
-                CourseInfo cInfo = CourseInfo.builder().id(id).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
-                courseInfos.add(cInfo);
-            }
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return courseInfos;
+    }
+
+    public ArrayList<CourseInfo> getCourseInfo(LocalDate startDate) throws SQLException, ClassNotFoundException {
+        ArrayList<CourseInfo> courseInfos = new ArrayList<>();
+        try {
+            conn = dc.connect();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yyyy");
+            formatter = formatter.withLocale(Locale.GERMAN);
+
+            PreparedStatement customerStatement = conn.prepareStatement("SELECT * FROM courseinfo WHERE datum BETWEEN ? AND ?");
+
+            customerStatement.setDate(1, java.sql.Date.valueOf(startDate));
+            customerStatement.setDate(2, java.sql.Date.valueOf(startDate.plusDays(4)));
+
+            ResultSet rs = customerStatement.executeQuery();
+
+            courseInfos = courseInfoRsToArrayList(rs);
 
             conn.close();
 
@@ -101,9 +96,9 @@ public class CourseInfoDb {
             PreparedStatement customerStatement = conn.prepareStatement("SELECT * FROM courseinfo WHERE id = " + id);
             ResultSet rs = customerStatement.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 //Retrieve by column name
-                int cid  = rs.getInt("id");
+                int cid = rs.getInt("id");
                 String titel = rs.getString("titel");
                 String code = rs.getString("code");
                 /* remove time from datetime stamp in SQL */
@@ -160,5 +155,25 @@ public class CourseInfoDb {
             e.printStackTrace();
             throw e;
         }
+    }
+
+
+
+    private ArrayList<CourseInfo> courseInfoRsToArrayList(ResultSet rs) throws SQLException, ClassNotFoundException {
+        ArrayList<CourseInfo> courseInfos = new ArrayList<>();
+
+        while (rs.next()) {
+            //Retrieve by column name
+            int id = rs.getInt("id");
+            String titel = rs.getString("titel");
+            String code = rs.getString("code");
+            LocalDate date = LocalDate.parse(rs.getString("datum").split(" ")[0]);
+            String dura = rs.getString("duur");
+
+            CourseInfo cInfo = CourseInfo.builder().id(id).titel(titel).cursuscode(code).startdatum(date).duur(dura).build();
+            courseInfos.add(cInfo);
+        }
+
+        return courseInfos;
     }
 }

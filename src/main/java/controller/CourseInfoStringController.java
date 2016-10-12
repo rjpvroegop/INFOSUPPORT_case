@@ -12,6 +12,8 @@ import java.util.Locale;
  * Created by rjpvr on 10-10-2016.
  */
 public class CourseInfoStringController {
+    String whatIsWrongWithTheFormat = "";
+
     public ArrayList<CourseInfo> toArrayList(String courseInfo){
         ArrayList<CourseInfo> list = new ArrayList<>();
 
@@ -27,13 +29,22 @@ public class CourseInfoStringController {
          */
 
         Arrays.asList(seperated.split(";;")).forEach(infoItem -> {
-            list.add(toCourseInfo(infoItem));
+            try {
+                list.add(toCourseInfo(infoItem));
+            } catch(Exception e){
+                e.printStackTrace();
+                throw e;
+            }
         });
 
         return list;
     }
 
     public CourseInfo toCourseInfo(String infoItem){
+        if(!isValidFormat(infoItem)){
+            throw new IllegalArgumentException("Wrong format in importing data: " + whatIsWrongWithTheFormat);
+        }
+
         CourseInfo.CourseInfoBuilder ci = new CourseInfo().builder();
 
         Arrays.asList(infoItem.split(";")).forEach(infoVar -> {
@@ -59,5 +70,44 @@ public class CourseInfoStringController {
         });
 
         return ci.build();
+    }
+
+    public boolean isValidFormat(String item){
+        boolean isCorrect = true;
+
+        String[] rows = item.split(";");
+        if(rows.length != 4){
+            whatIsWrongWithTheFormat += "The number of rows is incorrect: " + rows.length + "\r\n";
+            isCorrect = false;
+        } else {
+
+            String titel = rows[0].split(":")[0];
+            String code = rows[1].split(":")[0];
+            String duur = rows[2].split(":")[0];
+            String start = rows[3].split(":")[0];
+
+            if (!titel.equals("Titel")) {
+                whatIsWrongWithTheFormat += "The keyword Titel was not the first argument in the import item\n";
+                isCorrect = false;
+            }
+
+            if (!code.equals("Cursuscode")) {
+                whatIsWrongWithTheFormat += "The keyword Cursuscode was not the second argument in the import item\n";
+                isCorrect = false;
+            }
+
+            if (!duur.equals("Duur")) {
+                whatIsWrongWithTheFormat += "The keyword Duur was not the third argument in the import item\n";
+                isCorrect = false;
+            }
+
+            if (!start.equals("Startdatum")) {
+                whatIsWrongWithTheFormat += "The keyword Startdatum was not the fourth argument in the import item\n";
+                isCorrect = false;
+            }
+        }
+
+
+        return isCorrect;
     }
 }

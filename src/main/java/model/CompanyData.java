@@ -14,6 +14,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CompanyData {
-    private Student student;
     private String quotation;
 }

@@ -1,6 +1,8 @@
-package service;
+package course;
 
-import database.CourseDb;
+import controller.DateController;
+import course.CourseController;
+import course.CourseDb;
 import model.Course;
 
 import javax.ws.rs.*;
@@ -16,13 +18,14 @@ import java.util.ArrayList;
 public class CourseService {
 
 
-    public CourseDb db = new CourseDb();
+    public CourseController courseController = new CourseController();
+    private DateController dateController = new DateController();
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCourses(){
         try {
-            ArrayList<Course> list = db.getCourses();
+            ArrayList<Course> list = courseController.getCourses();
             return header(Response.ok(list));
         } catch(Exception exception){
             return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
@@ -34,7 +37,7 @@ public class CourseService {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response addCourse(Course course){
         try {
-            db.saveCourse(course);
+            courseController.saveCourse(course);
             return header(Response.ok("{\"message\":\"ok\"}"));
         } catch(Exception exception){
             return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));

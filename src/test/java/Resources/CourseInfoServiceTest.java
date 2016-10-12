@@ -1,6 +1,6 @@
 package Resources;
 
-import database.CourseInfoDb;
+import courseinfo.CourseInfoController;
 import model.CourseInfo;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,9 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import service.CourseInfoService;
+import courseinfo.CourseInfoService;
 
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.hamcrest.core.Is.is;
@@ -30,7 +31,7 @@ public class CourseInfoServiceTest {
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Mock
-    private CourseInfoDb db;
+    private CourseInfoController db;
 
     @InjectMocks
     private CourseInfoService sut;
@@ -58,6 +59,60 @@ public class CourseInfoServiceTest {
         Mockito.when(db.getCourseInfo()).thenThrow(new IllegalArgumentException());
 
         Response r = sut.getCourseInfo();
+
+        assertThat(r.getStatus(), is(412));
+    }
+
+    @Test
+    public void getCourseInfoListByWeek() throws Exception {
+        CourseInfo ci = new CourseInfo();
+        ArrayList<CourseInfo> ciList = new ArrayList<>();
+        ciList.add(ci);
+
+        Mockito.when(db.getCourseInfo(any(LocalDate.class))).thenReturn(ciList);
+
+        Response r = sut.getCourses(43);
+
+        Mockito.verify(db, times(1)).getCourseInfo(any(LocalDate.class));
+        assertThat(r.getStatus(), is(200));
+    }
+
+    @Test
+    public void getCourseInfoListByWeekToHandleException() throws Exception {
+        CourseInfo ci = new CourseInfo();
+        ArrayList<CourseInfo> ciList = new ArrayList<>();
+        ciList.add(ci);
+
+        Mockito.when(db.getCourseInfo(any(LocalDate.class))).thenThrow(new IllegalArgumentException());
+
+        Response r = sut.getCourses(43);
+
+        assertThat(r.getStatus(), is(412));
+    }
+
+    @Test
+    public void getCourseInfoListByWeekAndYear() throws Exception {
+        CourseInfo ci = new CourseInfo();
+        ArrayList<CourseInfo> ciList = new ArrayList<>();
+        ciList.add(ci);
+
+        Mockito.when(db.getCourseInfo(any(LocalDate.class))).thenReturn(ciList);
+
+        Response r = sut.getCourses(43, 2013);
+
+        Mockito.verify(db, times(1)).getCourseInfo(any(LocalDate.class));
+        assertThat(r.getStatus(), is(200));
+    }
+
+    @Test
+    public void getCourseInfoListByWeekAndYearToHandleException() throws Exception {
+        CourseInfo ci = new CourseInfo();
+        ArrayList<CourseInfo> ciList = new ArrayList<>();
+        ciList.add(ci);
+
+        Mockito.when(db.getCourseInfo(any(LocalDate.class))).thenThrow(new IllegalArgumentException());
+
+        Response r = sut.getCourses(43, 2013);
 
         assertThat(r.getStatus(), is(412));
     }
@@ -116,7 +171,10 @@ public class CourseInfoServiceTest {
 
     @Test
     public void addCourseInfoString() throws Exception {
-        String ci = "";
+        String ci = "Titel: C# Programmeren\n" +
+            "Cursuscode: CNETIN\n" +
+            "Duur: 5 dagen\n" +
+            "Startdatum: 14/10/2013\n";
 
         doNothing().when(db).saveCourseInfo(any(ArrayList.class));
 
@@ -129,7 +187,10 @@ public class CourseInfoServiceTest {
 
     @Test
     public void addCourseInfoStringToHandleException() throws Exception {
-        String ci = "";
+        String ci = "Titel: C# Programmeren\n" +
+            "Cursuscode: CNETIN\n" +
+            "Duur: 5 dagen\n" +
+            "Startdatum: 14/10/2013\n";
 
         doThrow(new IllegalArgumentException()).when(db).saveCourseInfo(any(ArrayList.class));
 

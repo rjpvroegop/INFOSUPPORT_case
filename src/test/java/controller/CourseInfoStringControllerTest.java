@@ -2,7 +2,9 @@ package controller;
 
 import model.CourseInfo;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,6 +16,10 @@ import static org.junit.Assert.assertThat;
  * Created by rjpvr on 11-10-2016.
  */
 public class CourseInfoStringControllerTest {
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     public CourseInfoStringController cisc;
 
     String correctTestString = "Titel: C# Programmeren\n" +
@@ -77,4 +83,45 @@ public class CourseInfoStringControllerTest {
         assertThat(ci.getStartdatum().equals(LocalDate.of(2013, 10, 14)), is(true));
     }
 
+    @Test
+    public void getCreateCourseErrorBecauseOfTypo() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("Titel", "Tite"));
+    }
+
+    @Test
+    public void getCreateCourseErrorBecauseOfTypo2() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("Duur", "duur"));
+    }
+
+    @Test
+    public void getCreateCourseErrorBecauseOfTypo3() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("Cursuscode", "Cursuscode "));
+    }
+
+    @Test
+    public void getCreateCourseErrorBecauseOfTypo4() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("Startdatum", ""));
+    }
+
+    @Test
+    public void getCreateCourseErrorBecauseOfMissingLine() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("Startdatum: 14/10/2013\n", ""));
+    }
+
+    @Test
+    public void getCreateCourseErrorBecauseOfNoWhitespace() throws Exception {
+        expectedEx.expect(IllegalArgumentException.class);
+
+        ArrayList<CourseInfo> cil = cisc.toArrayList(correctTestString.replace("\n\n", "\n"));
+    }
 }
