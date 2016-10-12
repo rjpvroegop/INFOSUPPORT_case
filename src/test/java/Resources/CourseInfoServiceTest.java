@@ -144,32 +144,6 @@ public class CourseInfoServiceTest {
     }
 
     @Test
-    public void addCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doNothing().when(db).saveCourseInfo(ci);
-
-        Response r = sut.addCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).saveCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(200));
-    }
-
-    @Test
-    public void addCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doThrow(new IllegalArgumentException()).when(db).saveCourseInfo(ci);
-
-        Response r = sut.addCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).saveCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(412));
-    }
-
-    @Test
     public void addCourseInfoString() throws Exception {
         String ci = "Titel: C# Programmeren\n" +
             "Cursuscode: CNETIN\n" +
@@ -202,64 +176,12 @@ public class CourseInfoServiceTest {
     }
 
     @Test
-    public void updateCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doNothing().when(db).updateCourseInfo(ci);
-
-        Response r = sut.updateCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).updateCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(200));
-    }
-
-    @Test
-    public void updateCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doThrow(new IllegalArgumentException()).when(db).updateCourseInfo(ci);
-
-        Response r = sut.updateCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).updateCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(412));
-    }
-
-    @Test
-    public void removeCourseInfo() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doNothing().when(db).removeCourseInfo(ci);
-
-        Response r = sut.removeCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).removeCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(200));
-    }
-
-    @Test
-    public void removeCourseInfoToHandleException() throws Exception {
-        CourseInfo ci = new CourseInfo();
-
-        doThrow(new IllegalArgumentException()).when(db).removeCourseInfo(ci);
-
-        Response r = sut.removeCourseInfo(ci);
-
-        Mockito.verify(db, times(1)).removeCourseInfo(ci);
-
-        assertThat(r.getStatus(), is(412));
-    }
-
-    @Test
     public void optionHeader() throws Exception {
         Response r = sut.optionHeader();
 
         assertThat(r.getStatus(), is(200));
 
-        assertThat(r.getHeaders().toString().contains("[GET, POST, PUT, DELETE]"), is(true));
+        assertThat(r.getHeaders().toString().contains("[GET, POST]"), is(true));
     }
 
 }

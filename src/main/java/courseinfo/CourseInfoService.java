@@ -73,47 +73,11 @@ public class CourseInfoService {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    public Response addCourseInfo(CourseInfo courseInfo){
-        try {
-            db.saveCourseInfo(courseInfo);
-            return header(Response.ok("{\"message\":\"ok\"}"));
-        } catch(Exception exception){
-            return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
-        }
-    }
-
-    @POST
-    @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.TEXT_PLAIN})
     public Response addCourseInfo(String courseInfo){
         try {
             CourseInfoStringController cisc = new CourseInfoStringController();
             db.saveCourseInfo(cisc.toArrayList(courseInfo));
-            return header(Response.ok("{\"message\":\"ok\"}"));
-        } catch(Exception exception){
-            return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
-        }
-    }
-
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCourseInfo(CourseInfo courseInfo){
-        try {
-            db.updateCourseInfo(courseInfo);
-            return header(Response.ok("{\"message\":\"ok\"}"));
-        } catch(Exception exception){
-            return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
-        }
-    }
-
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeCourseInfo(CourseInfo courseInfo){
-        try {
-            db.removeCourseInfo(courseInfo);
             return header(Response.ok("{\"message\":\"ok\"}"));
         } catch(Exception exception){
             return header(Response.status(412).entity("{\"error\":\"" + exception.getMessage() + "\"}"));
@@ -129,6 +93,6 @@ public class CourseInfoService {
         return responseBuilder
             .header("Access-Control-Allow-Origin", "*")
             .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Session")
-            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE").build();
+            .header("Access-Control-Allow-Methods", "GET, POST").build();
     }
 }

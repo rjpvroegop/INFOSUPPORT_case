@@ -97,6 +97,6 @@ public class QuotationServiceTest {
 
         assertThat(r.getStatus(), is(200));
 
-        assertThat(r.getHeaders().toString().contains("[GET, POST, PUT, DELETE]"), is(true));
+        assertThat(r.getHeaders().toString().contains("[GET]"), is(true));
     }
 }
